@@ -1,10 +1,9 @@
-import path from 'path';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
 
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const __dirname = path.dirname(__filename);
 
 export default {
   entry: './src/index.ts',
@@ -44,5 +43,6 @@ export default {
   devServer: {
     static: './dist',
     port: 3000,
+    historyApiFallback: true,
   },
 };
