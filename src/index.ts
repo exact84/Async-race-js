@@ -6,6 +6,7 @@ import {
   addOptionRow,
   clearOptions,
   getOptions,
+  isValidOption,
   setOptions,
   type Option,
 } from './optionsManager';
@@ -15,16 +16,38 @@ document.addEventListener('DOMContentLoaded', initApp);
 function initApp(): void {
   const body = document.body;
   if (!body) return;
-  const router = new Router(body);
-  // router.navigate('/');
+  new Router(body);
 }
 
-// Type guard для проверки наличия свойства в объекте
-function hasProperty<T, K extends string>(
-  obj: T,
-  prop: K,
-): obj is T & Record<K, unknown> {
-  return obj !== null && typeof obj === 'object' && prop in obj;
+function loadFromFile(file: File, optionsContainer: HTMLElement): void {
+  file
+    .text()
+    .then((content) => {
+      const parsedData: unknown = JSON.parse(content);
+
+      if (!Array.isArray(parsedData)) {
+        throw new TypeError('Data is not an array');
+      }
+
+      const validOptions: Option[] = [];
+
+      for (const item of parsedData) {
+        if (isValidOption(item)) {
+          validOptions.push({
+            id: item.id ?? 0,
+            text: item.text,
+            weight: item.weight,
+          });
+        } else {
+          throw new Error('Invalid option format');
+        }
+      }
+
+      setOptions(validOptions, optionsContainer);
+    })
+    .catch((error: unknown) => {
+      console.error('Failed to load options:', error);
+    });
 }
 
 function createModalMessage(
@@ -67,11 +90,9 @@ function createModalMessage(
       document.removeEventListener('keydown', handleEscapeKey);
     }
   };
-
   document.addEventListener('keydown', handleEscapeKey);
 }
 
-// проверка валидности опций
 function getValidOptions(): Option[] {
   return getOptions().filter(
     (option) => option.text.trim() !== '' && option.weight > 0,
@@ -87,7 +108,7 @@ export default function createDecisionMakingTool(router?: Router): void {
   newElement('h2', 'Decision Making Tool', body);
   newElement(
     'h4',
-    'Будьте так великодушны, подождите пожалуйста немного. Скоро будет готово )',
+    'Будьте так великодушны, подождие пожалуйста немного. Скоро будeт готово )',
     body,
   );
 
@@ -235,56 +256,7 @@ export default function createDecisionMakingTool(router?: Router): void {
       if (!target.files || target.files.length === 0) return;
 
       const file = target.files[0];
-
-      void (async function loadFromFile(): Promise<void> {
-        try {
-          const content = await file.text();
-
-          let parsedData: unknown;
-          try {
-            parsedData = JSON.parse(content);
-          } catch (error: unknown) {
-            const errorMessage =
-              error instanceof Error ? error.message : String(error);
-            throw new Error(`Invalid JSON format. ${errorMessage}`);
-          }
-
-          if (!Array.isArray(parsedData)) {
-            throw new TypeError('Data is not an array');
-          }
-
-          const validOptions: Option[] = [];
-
-          for (const item of parsedData) {
-            if (
-              typeof item === 'object' &&
-              item !== null &&
-              hasProperty(item, 'text') &&
-              hasProperty(item, 'weight')
-            ) {
-              const id =
-                hasProperty(item, 'id') && typeof item.id === 'number'
-                  ? item.id
-                  : 0;
-
-              validOptions.push({
-                id,
-                text: String(item.text),
-                weight: Number(item.weight),
-              });
-            } else {
-              throw new Error('Invalid option format');
-            }
-          }
-
-          setOptions(validOptions, optionsContainer);
-        } catch (error) {
-          console.error(
-            'Please select a valid JSON. Failed to parse file:',
-            error,
-          );
-        }
-      })();
+      loadFromFile(file, optionsContainer);
     });
 
     input.click();
