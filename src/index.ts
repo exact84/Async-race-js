@@ -16,19 +16,90 @@ function initApp(): void {
   const body = document.body;
   if (!body) return;
   const router = new Router(body);
-  router.navigate('/');
+  // router.navigate('/');
 }
 
-export default function createDecisionMakingTool(): void {
+// Type guard для проверки наличия свойства в объекте
+function hasProperty<T, K extends string>(
+  obj: T,
+  prop: K,
+): obj is T & Record<K, unknown> {
+  return obj !== null && typeof obj === 'object' && prop in obj;
+}
+
+function createModalMessage(
+  title: string,
+  message: string,
+  parent: HTMLElement = document.body,
+): void {
+  const modalOverlay = newElement('div', '', parent, ['modal-overlay']);
+  const modalContent = newElement('div', '', modalOverlay, ['modal-content']);
+
+  newElement('h3', title, modalContent);
+  newElement('p', message, modalContent);
+
+  const buttonContainer = newElement('div', '', modalContent, [
+    'modal-buttons',
+  ]);
+  const okButton = newElement('button', 'OK', buttonContainer, [
+    'modal-btn',
+    'confirm-btn',
+  ]);
+
+  document.body.classList.add('modal-open');
+
+  okButton.addEventListener('click', () => {
+    modalOverlay.remove();
+    document.body.classList.remove('modal-open');
+  });
+
+  modalOverlay.addEventListener('click', (event) => {
+    if (event.target === modalOverlay) {
+      modalOverlay.remove();
+      document.body.classList.remove('modal-open');
+    }
+  });
+
+  const handleEscapeKey = (event: KeyboardEvent): void => {
+    if (event.key === 'Escape') {
+      modalOverlay.remove();
+      document.body.classList.remove('modal-open');
+      document.removeEventListener('keydown', handleEscapeKey);
+    }
+  };
+
+  document.addEventListener('keydown', handleEscapeKey);
+}
+
+// проверка валидности опций
+function getValidOptions(): Option[] {
+  return getOptions().filter(
+    (option) => option.text.trim() !== '' && option.weight > 0,
+  );
+}
+
+export default function createDecisionMakingTool(router?: Router): void {
   const body = document.body;
   if (!body) return;
 
   body.replaceChildren();
 
   newElement('h2', 'Decision Making Tool', body);
+  newElement(
+    'h4',
+    'Будьте так великодушны, подождите пожалуйста немного. Скоро будет готово )',
+    body,
+  );
 
   const optionsContainer = newElement('div', '', body, ['options-container']);
   optionsContainer.id = 'options-container';
+
+  const existingOptions = getOptions();
+  if (existingOptions.length > 0) {
+    for (const option of existingOptions) {
+      addOptionRow(optionsContainer, option);
+    }
+  }
 
   const addOptionButton = newElement('button', 'Add Option', body, [
     'action-btn',
@@ -92,7 +163,25 @@ export default function createDecisionMakingTool(): void {
 
     cancelButton.addEventListener('click', () => {
       modalOverlay.remove();
+      document.body.classList.remove('modal-open');
     });
+
+    modalOverlay.addEventListener('click', (event) => {
+      if (event.target === modalOverlay) {
+        modalOverlay.remove();
+        document.body.classList.remove('modal-open');
+      }
+    });
+
+    const handleEscapeKey = (event: KeyboardEvent): void => {
+      if (event.key === 'Escape') {
+        modalOverlay.remove();
+        document.body.classList.remove('modal-open');
+        document.removeEventListener('keydown', handleEscapeKey);
+      }
+    };
+
+    document.addEventListener('keydown', handleEscapeKey);
 
     confirmButton.addEventListener('click', () => {
       const text = textarea.value;
@@ -100,15 +189,20 @@ export default function createDecisionMakingTool(): void {
 
       if (lines.length > 0) {
         const newOptions: Option[] = lines.map((line) => ({
-          id: 0, //  будет заменен в setOptions
+          id: 0, // будет заменен в setOptions
           text: line,
           weight: 1,
         }));
-        setOptions(newOptions, optionsContainer);
+
+        const currentOptions = getOptions();
+        setOptions([...currentOptions, ...newOptions], optionsContainer);
       }
 
       modalOverlay.remove();
+      document.body.classList.remove('modal-open');
     });
+
+    document.body.classList.add('modal-open');
   });
 
   saveListButton.addEventListener('click', () => {
@@ -161,14 +255,6 @@ export default function createDecisionMakingTool(): void {
 
           const validOptions: Option[] = [];
 
-          // проверка наличия свойства в объекте
-          function hasProperty<T, K extends string>(
-            obj: T,
-            prop: K,
-          ): obj is T & Record<K, unknown> {
-            return obj !== null && typeof obj === 'object' && prop in obj;
-          }
-
           for (const item of parsedData) {
             if (
               typeof item === 'object' &&
@@ -205,7 +291,16 @@ export default function createDecisionMakingTool(): void {
   });
 
   startButton.addEventListener('click', () => {
-    const router = new Router(body);
-    router.navigate('/wheel');
+    const validOptions = getValidOptions();
+    if (validOptions.length >= 2) {
+      if (router) {
+        router.navigate('/wheel');
+      }
+    } else {
+      createModalMessage(
+        'Warning',
+        'You need at least 2 valid options to start. A valid option has a non-empty title and a weight greater than 0.',
+      );
+    }
   });
 }

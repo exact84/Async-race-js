@@ -7,6 +7,7 @@ const __dirname = path.dirname(__filename);
 
 export default {
   entry: './src/index.ts',
+  cache: false,
   output: {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist'),
@@ -28,6 +29,10 @@ export default {
       },
       {
         test: /\.(png|svg|jpg|jpeg|gif)$/i,
+        type: 'asset/resource',
+      },
+      {
+        test: /\.mp3$/,
         type: 'asset/resource',
       },
     ],
