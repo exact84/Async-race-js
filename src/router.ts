@@ -1,5 +1,6 @@
 import renderRandomWheel from './randomWheel';
 import createDecisionMakingTool from './index';
+import newElement from './newElement';
 
 export default class Router {
   private readonly routes: Record<string, () => void>;
@@ -14,10 +15,15 @@ export default class Router {
       '/wheel': (): void => {
         this.renderRandomWheel();
       },
+      '/error': (): void => {
+        this.renderErrorPage();
+      },
     };
+
     globalThis.addEventListener('popstate', () => {
       this.handleRouteChange();
     });
+
     this.handleRouteChange();
   }
 
@@ -29,18 +35,24 @@ export default class Router {
   }
 
   private handleRouteChange(): void {
-    const path = globalThis.location.pathname;
+    let path = globalThis.location.pathname;
+
+    if (path === '' || path === '/' || path === '/decision-making-tool/') {
+      path = '/';
+    }
+
     const routeHandler = this.routes[path];
+
     if (routeHandler) {
       routeHandler();
     } else {
-      this.renderNotFound();
+      this.renderErrorPage();
     }
   }
 
   private renderHome(): void {
     this.root.replaceChildren();
-    createDecisionMakingTool();
+    createDecisionMakingTool(this);
   }
 
   private renderRandomWheel(): void {
@@ -48,8 +60,18 @@ export default class Router {
     renderRandomWheel(this);
   }
 
-  private renderNotFound(): void {
+  private renderErrorPage(): void {
     this.root.replaceChildren();
-    this.navigate('/404');
+
+    newElement('h1', 'Error 404', this.root);
+    newElement('h2', 'Page Not Found', this.root);
+    newElement('p', 'The page you are looking for does not exist.', this.root);
+
+    const backButton = newElement('button', 'Back to Home', this.root, [
+      'start-btn',
+    ]);
+    backButton.addEventListener('click', () => {
+      this.navigate('/');
+    });
   }
 }
