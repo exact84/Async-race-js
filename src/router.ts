@@ -1,4 +1,4 @@
-import renderRandomWheel from './randomWheel';
+import renderRandomWheel from './wheel/randomWheel';
 import createDecisionMakingTool from './index';
 import newElement from './newElement';
 
