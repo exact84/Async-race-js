@@ -19,6 +19,8 @@ import {
 import winMp3 from '../assets/win.mp3';
 import startMp3 from '../assets/startWin.mp3';
 
+const MIN_DURATION = 5;
+
 export default function renderRandomWheel(router: Router): void {
   const body = document.body;
   if (!body) return;
@@ -36,9 +38,9 @@ export default function renderRandomWheel(router: Router): void {
   let isMuted = localStorage.getItem('wheelSoundMuted') === 'true';
 
   let rotationDuration = Number(
-    localStorage.getItem('wheelRotationDuration') ?? '5',
+    localStorage.getItem('wheelRotationDuration') ?? MIN_DURATION.toString(),
   );
-  if (rotationDuration < 5) rotationDuration = 5;
+  if (rotationDuration < MIN_DURATION) rotationDuration = MIN_DURATION;
 
   let soundsSupported = true;
   const spinSound = createAudioElement(startMp3);
@@ -52,19 +54,7 @@ export default function renderRandomWheel(router: Router): void {
   finishSound.load();
 
   if (validOptions.length < 2) {
-    newElement(
-      'p',
-      'You need at least 2 valid options to use the wheel. Please add more options on the main page.',
-      body,
-    );
-
-    const backButtonEl = newElement('button', 'Back', body, ['back-btn']);
-    if (backButtonEl instanceof HTMLButtonElement) {
-      const backButton = backButtonEl;
-      backButton.addEventListener('click', () => {
-        router.navigate('/');
-      });
-    }
+    router.navigate('/');
   } else {
     const wheelOptions: WheelOption[] = validOptions.map((option) => ({
       ...option,
@@ -124,7 +114,7 @@ export default function renderRandomWheel(router: Router): void {
       ['duration-input'],
       {
         type: 'number',
-        min: '5',
+        min: MIN_DURATION.toString(),
         value: String(rotationDuration),
       },
     );
@@ -147,11 +137,13 @@ export default function renderRandomWheel(router: Router): void {
 
     durationInput.addEventListener('change', () => {
       const newDuration = Number(durationInput.value);
-      if (newDuration >= 5) {
+      if (newDuration >= MIN_DURATION) {
         rotationDuration = newDuration;
         localStorage.setItem('wheelRotationDuration', String(rotationDuration));
       } else {
-        durationInput.setCustomValidity('Duration must be at least 5 seconds');
+        durationInput.setCustomValidity(
+          `Duration must be at least ${MIN_DURATION.toString()} seconds`,
+        );
         durationInput.reportValidity();
       }
     });
@@ -159,7 +151,9 @@ export default function renderRandomWheel(router: Router): void {
     spinButton.addEventListener('click', () => {
       const newDuration = Number(durationInput.value);
       if (newDuration < 5) {
-        durationInput.setCustomValidity('Duration must be at least 5 seconds');
+        durationInput.setCustomValidity(
+          `Duration must be at least ${MIN_DURATION.toString()} seconds`,
+        );
         durationInput.reportValidity();
         return;
       }
@@ -169,6 +163,7 @@ export default function renderRandomWheel(router: Router): void {
       backButton.disabled = true;
       soundButton.disabled = true;
       spinButton.disabled = true;
+      durationInputEl.disabled = true;
 
       playSoundSafely(spinSound, isMuted, soundsSupported);
 
@@ -229,6 +224,7 @@ export default function renderRandomWheel(router: Router): void {
           backButton.disabled = false;
           soundButton.disabled = false;
           spinButton.disabled = false;
+          durationInput.disabled = false;
         }
       }
 

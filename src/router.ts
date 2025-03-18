@@ -2,6 +2,12 @@ import renderRandomWheel from './wheel/randomWheel';
 import createDecisionMakingTool from './index';
 import newElement from './newElement';
 
+const ROUTES = {
+  HOME: '/',
+  WHEEL: '/wheel',
+  ERROR: '/error',
+  HOME_ALIAS: '/decision-making-tool/',
+} as const;
 export default class Router {
   private readonly routes: Record<string, () => void>;
   private readonly root: HTMLElement;
@@ -9,13 +15,13 @@ export default class Router {
   constructor(root: HTMLElement) {
     this.root = root;
     this.routes = {
-      '/': (): void => {
+      [ROUTES.HOME]: (): void => {
         this.renderHome();
       },
-      '/wheel': (): void => {
+      [ROUTES.WHEEL]: (): void => {
         this.renderRandomWheel();
       },
-      '/error': (): void => {
+      [ROUTES.ERROR]: (): void => {
         this.renderErrorPage();
       },
     };
@@ -23,7 +29,6 @@ export default class Router {
     globalThis.addEventListener('popstate', () => {
       this.handleRouteChange();
     });
-
     this.handleRouteChange();
   }
 
@@ -36,9 +41,8 @@ export default class Router {
 
   private handleRouteChange(): void {
     let path = globalThis.location.pathname;
-
-    if (path === '' || path === '/' || path === '/decision-making-tool/') {
-      path = '/';
+    if (path === '' || path === ROUTES.HOME || path === ROUTES.HOME_ALIAS) {
+      path = ROUTES.HOME;
     }
 
     const routeHandler = this.routes[path];
@@ -71,7 +75,7 @@ export default class Router {
       'start-btn',
     ]);
     backButton.addEventListener('click', () => {
-      this.navigate('/');
+      this.navigate(ROUTES.HOME);
     });
   }
 }

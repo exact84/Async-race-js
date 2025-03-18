@@ -24,13 +24,10 @@ function loadFromFile(file: File, optionsContainer: HTMLElement): void {
     .text()
     .then((content) => {
       const parsedData: unknown = JSON.parse(content);
-
-      if (!Array.isArray(parsedData)) {
+      if (!Array.isArray(parsedData))
         throw new TypeError('Data is not an array');
-      }
 
       const validOptions: Option[] = [];
-
       for (const item of parsedData) {
         if (isValidOption(item)) {
           validOptions.push({
@@ -42,7 +39,6 @@ function loadFromFile(file: File, optionsContainer: HTMLElement): void {
           throw new Error('Invalid option format');
         }
       }
-
       setOptions(validOptions, optionsContainer);
     })
     .catch((error: unknown) => {
@@ -99,18 +95,89 @@ function getValidOptions(): Option[] {
   );
 }
 
+function createPasteListModal(
+  parent: HTMLElement,
+  optionsContainer: HTMLElement,
+): void {
+  const modalOverlay = newElement('div', '', parent, ['modal-overlay']);
+  const modalContent = newElement('div', '', modalOverlay, ['modal-content']);
+
+  newElement('h3', 'Enter your list', modalContent);
+
+  const textarea = newElement('textarea', '', modalContent, ['modal-textarea']);
+  if (!(textarea instanceof HTMLTextAreaElement)) {
+    console.error('Failed to create textarea');
+    return;
+  }
+  textarea.rows = 10;
+  textarea.cols = 50;
+  textarea.placeholder = 'Enter one option per line, e.g.: title1, weight1';
+
+  const buttonContainer = newElement('div', '', modalContent, [
+    'modal-buttons',
+  ]);
+  const cancelButton = newElement('button', 'Cancel', buttonContainer, [
+    'modal-btn',
+    'cancel-btn',
+  ]);
+  const confirmButton = newElement('button', 'Confirm', buttonContainer, [
+    'modal-btn',
+    'confirm-btn',
+  ]);
+
+  const closeModal = (): void => {
+    modalOverlay.remove();
+    document.body.classList.remove('modal-open');
+  };
+
+  cancelButton.addEventListener('click', closeModal);
+
+  modalOverlay.addEventListener('click', (event) => {
+    if (event.target === modalOverlay) {
+      closeModal();
+    }
+  });
+
+  const handleEscapeKey = (event: KeyboardEvent): void => {
+    if (event.key === 'Escape') {
+      closeModal();
+      document.removeEventListener('keydown', handleEscapeKey);
+    }
+  };
+  document.addEventListener('keydown', handleEscapeKey);
+
+  confirmButton.addEventListener('click', () => {
+    const text = textarea.value;
+    const lines = text.split('\n').filter((line) => line.trim() !== '');
+
+    if (lines.length > 0) {
+      const newOptions: Option[] = lines.map((line) => {
+        const [textPart, weightPart] = line
+          .split(', ')
+          .map((part) => part.trim());
+        const weight = Number(weightPart);
+        return {
+          id: 0,
+          text: textPart || '',
+          weight: Number.isNaN(weight) || weight <= 0 ? 1 : weight,
+        };
+      });
+      const currentOptions = getOptions();
+      setOptions([...currentOptions, ...newOptions], optionsContainer);
+    }
+    closeModal();
+  });
+
+  document.body.classList.add('modal-open');
+}
+
 export default function createDecisionMakingTool(router?: Router): void {
   const body = document.body;
   if (!body) return;
 
   body.replaceChildren();
 
-  newElement('h2', 'Decision Making Tool', body);
-  newElement(
-    'h4',
-    'Будьте так великодушны, подождие пожалуйста немного. Скоро будeт готово )',
-    body,
-  );
+  newElement('h1', 'Decision Making Tool', body);
 
   const optionsContainer = newElement('div', '', body, ['options-container']);
   optionsContainer.id = 'options-container';
@@ -154,76 +221,7 @@ export default function createDecisionMakingTool(router?: Router): void {
   });
 
   pasteListButton.addEventListener('click', () => {
-    const modalOverlay = newElement('div', '', body, ['modal-overlay']);
-    const modalContent = newElement('div', '', modalOverlay, ['modal-content']);
-
-    newElement('h3', 'Enter your list', modalContent);
-
-    const textareaElement = newElement('textarea', '', modalContent, [
-      'modal-textarea',
-    ]);
-    if (!(textareaElement instanceof HTMLTextAreaElement)) return;
-
-    const textarea = textareaElement;
-    textarea.rows = 10;
-    textarea.cols = 50;
-    textarea.placeholder = 'Enter one option per line';
-
-    const buttonContainer = newElement('div', '', modalContent, [
-      'modal-buttons',
-    ]);
-
-    const cancelButton = newElement('button', 'Cancel', buttonContainer, [
-      'modal-btn',
-      'cancel-btn',
-    ]);
-    const confirmButton = newElement('button', 'Confirm', buttonContainer, [
-      'modal-btn',
-      'confirm-btn',
-    ]);
-
-    cancelButton.addEventListener('click', () => {
-      modalOverlay.remove();
-      document.body.classList.remove('modal-open');
-    });
-
-    modalOverlay.addEventListener('click', (event) => {
-      if (event.target === modalOverlay) {
-        modalOverlay.remove();
-        document.body.classList.remove('modal-open');
-      }
-    });
-
-    const handleEscapeKey = (event: KeyboardEvent): void => {
-      if (event.key === 'Escape') {
-        modalOverlay.remove();
-        document.body.classList.remove('modal-open');
-        document.removeEventListener('keydown', handleEscapeKey);
-      }
-    };
-
-    document.addEventListener('keydown', handleEscapeKey);
-
-    confirmButton.addEventListener('click', () => {
-      const text = textarea.value;
-      const lines = text.split('\n').filter((line) => line.trim() !== '');
-
-      if (lines.length > 0) {
-        const newOptions: Option[] = lines.map((line) => ({
-          id: 0, // будет заменен в setOptions
-          text: line,
-          weight: 1,
-        }));
-
-        const currentOptions = getOptions();
-        setOptions([...currentOptions, ...newOptions], optionsContainer);
-      }
-
-      modalOverlay.remove();
-      document.body.classList.remove('modal-open');
-    });
-
-    document.body.classList.add('modal-open');
+    createPasteListModal(body, optionsContainer);
   });
 
   saveListButton.addEventListener('click', () => {
@@ -265,9 +263,7 @@ export default function createDecisionMakingTool(router?: Router): void {
   startButton.addEventListener('click', () => {
     const validOptions = getValidOptions();
     if (validOptions.length >= 2) {
-      if (router) {
-        router.navigate('/wheel');
-      }
+      if (router) router.navigate('/wheel');
     } else {
       createModalMessage(
         'Warning',

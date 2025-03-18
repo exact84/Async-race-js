@@ -10,7 +10,6 @@ export default tseslint.config(
   tseslint.configs.stylisticTypeChecked,
   unicorn.configs.recommended,
   {
-    // ignores: ['dist', 'node_modules'],
     ignores: ['commitlint.config.js', 'eslint.config.mjs', 'webpack.config.js'],
   },
   {
@@ -38,10 +37,9 @@ export default tseslint.config(
       ],
       '@typescript-eslint/member-ordering': 'error',
       'class-methods-use-this': 'error',
-      // unicorn
       'unicorn/prevent-abbreviations': 'off',
       'unicorn/filename-case': ['error', { case: 'camelCase' }],
-      // 'unicorn/no-array-instanceof': 'error', deprecated
+      // 'unicorn/no-array-instanceof': 'error', // deprecated
       'unicorn/prefer-query-selector': 'error',
       '@typescript-eslint/no-unnecessary-condition': 'off',
     },

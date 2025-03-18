@@ -1,5 +1,6 @@
 import newElement from './newElement';
 
+const EMPTY_OPTION: Option = { id: 1, text: '', weight: 0 };
 export interface Option {
   id: number;
   text: string;
@@ -33,9 +34,7 @@ try {
 }
 
 export const options: Option[] =
-  isInitialized && isValidOptionArray(parsedData)
-    ? parsedData
-    : [{ id: 1, text: '', weight: 1 }];
+  isInitialized && isValidOptionArray(parsedData) ? parsedData : [EMPTY_OPTION];
 
 if (!isInitialized) {
   localStorage.setItem('wheelInitialized', 'true');
@@ -51,7 +50,7 @@ function saveOptionsToLocalStorage(): void {
 export function addOptionRow(container: HTMLElement, option?: Option): void {
   const id = option?.id ?? nextId++;
   const text = option?.text ?? '';
-  const weight = option?.weight ?? 1;
+  const weight = option?.weight ?? 0;
 
   if (!option) {
     options.push({ id, text, weight });
@@ -71,7 +70,7 @@ export function addOptionRow(container: HTMLElement, option?: Option): void {
   const newWeightInput = newElement('input', '', newRow, ['weight-input'], {
     type: 'number',
     value: String(weight),
-    min: '1',
+    min: '0',
   });
 
   const newDeleteButton = newElement('button', 'Delete', newRow, [
@@ -110,7 +109,6 @@ export function addOptionRow(container: HTMLElement, option?: Option): void {
 
     if (options.length === 0) {
       nextId = 1;
-      options.push({ id: nextId++, text: '', weight: 1 });
       saveOptionsToLocalStorage();
     }
   });
@@ -123,8 +121,7 @@ function findOptionIndexById(id: number): number {
 export function clearOptions(container: HTMLElement): void {
   options.length = 0;
   container.replaceChildren();
-  options.push({ id: 1, text: '', weight: 1 });
-  nextId = 2;
+  nextId = 1;
   saveOptionsToLocalStorage();
 }
 
@@ -140,7 +137,7 @@ export function setOptions(newOptions: Option[], container: HTMLElement): void {
 
   for (const option of newOptions) {
     const newOption = { ...option };
-    if (!('id' in option) || typeof option.id !== 'number') {
+    if (!('id' in option) || typeof option.id !== 'number' || option.id === 0) {
       newOption.id = nextId++;
     } else {
       maxId = Math.max(maxId, newOption.id);
@@ -149,6 +146,9 @@ export function setOptions(newOptions: Option[], container: HTMLElement): void {
     addOptionRow(container, newOption);
   }
 
-  nextId = maxId + 1;
+  nextId = Math.max(maxId + 1, nextId);
+  if (options.length === 0) {
+    nextId = 1;
+  }
   saveOptionsToLocalStorage();
 }
