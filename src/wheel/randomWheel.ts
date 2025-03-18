@@ -20,6 +20,7 @@ import winMp3 from '../assets/win.mp3';
 import startMp3 from '../assets/startWin.mp3';
 
 const MIN_DURATION = 5;
+const MAX_DURATION = 30;
 
 export default function renderRandomWheel(router: Router): void {
   const body = document.body;
@@ -41,7 +42,7 @@ export default function renderRandomWheel(router: Router): void {
     localStorage.getItem('wheelRotationDuration') ?? MIN_DURATION.toString(),
   );
   if (rotationDuration < MIN_DURATION) rotationDuration = MIN_DURATION;
-
+  if (rotationDuration > MAX_DURATION) rotationDuration = MAX_DURATION;
   let soundsSupported = true;
   const spinSound = createAudioElement(startMp3);
   const finishSound = createAudioElement(winMp3);
@@ -115,6 +116,7 @@ export default function renderRandomWheel(router: Router): void {
       {
         type: 'number',
         min: MIN_DURATION.toString(),
+        max: MAX_DURATION.toString(),
         value: String(rotationDuration),
       },
     );
@@ -137,22 +139,35 @@ export default function renderRandomWheel(router: Router): void {
 
     durationInput.addEventListener('change', () => {
       const newDuration = Number(durationInput.value);
-      if (newDuration >= MIN_DURATION) {
+      if (newDuration >= MIN_DURATION && newDuration <= MAX_DURATION) {
         rotationDuration = newDuration;
         localStorage.setItem('wheelRotationDuration', String(rotationDuration));
       } else {
-        durationInput.setCustomValidity(
-          `Duration must be at least ${MIN_DURATION.toString()} seconds`,
-        );
+        if (newDuration < MIN_DURATION) {
+          durationInput.setCustomValidity(
+            `Duration must be at least ${MIN_DURATION.toString()} seconds`,
+          );
+        } else {
+          durationInput.setCustomValidity(
+            `Duration must be at most ${MAX_DURATION.toString()} seconds`,
+          );
+        }
         durationInput.reportValidity();
       }
     });
 
     spinButton.addEventListener('click', () => {
       const newDuration = Number(durationInput.value);
-      if (newDuration < 5) {
+      if (newDuration < MIN_DURATION) {
         durationInput.setCustomValidity(
           `Duration must be at least ${MIN_DURATION.toString()} seconds`,
+        );
+        durationInput.reportValidity();
+        return;
+      }
+      if (newDuration > MAX_DURATION) {
+        durationInput.setCustomValidity(
+          `Duration must be at most ${MAX_DURATION.toString()} seconds`,
         );
         durationInput.reportValidity();
         return;

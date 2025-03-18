@@ -105,10 +105,15 @@
 .result {
   font-size: 24px;
   text-align: center;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  height: 25px;
+  width: 400px;
   margin: 20px 0;
   padding: 10px;
   border-radius: 5px;
   background-color: #d6e4f1;
+  overflow: hidden;
 }
 
 .result.picked {

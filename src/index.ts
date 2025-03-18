@@ -153,13 +153,13 @@ function createPasteListModal(
     if (lines.length > 0) {
       const newOptions: Option[] = lines.map((line) => {
         const [textPart, weightPart] = line
-          .split(', ')
+          .split(',')
           .map((part) => part.trim());
         const weight = Number(weightPart);
         return {
           id: 0,
           text: textPart || '',
-          weight: Number.isNaN(weight) || weight <= 0 ? 1 : weight,
+          weight: Number.isNaN(weight) || weight <= 0 ? 0 : weight,
         };
       });
       const currentOptions = getOptions();
