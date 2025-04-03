@@ -1,12 +1,12 @@
-import renderRandomWheel from './wheel/randomWheel';
-import createDecisionMakingTool from './index';
+import renderRace from './race';
+import createGarage from './index';
 import newElement from './newElement';
 
 const ROUTES = {
   HOME: '/',
-  WHEEL: '/wheel',
+  WHEEL: '/race',
   ERROR: '/error',
-  HOME_ALIAS: '/decision-making-tool/',
+  HOME_ALIAS: '/async-race/',
 } as const;
 export default class Router {
   private readonly routes: Record<string, () => void>;
@@ -56,12 +56,12 @@ export default class Router {
 
   private renderHome(): void {
     this.root.replaceChildren();
-    createDecisionMakingTool(this);
+    createGarage(this);
   }
 
   private renderRandomWheel(): void {
     this.root.replaceChildren();
-    renderRandomWheel(this);
+    renderRace(this);
   }
 
   private renderErrorPage(): void {
