@@ -1,10 +1,10 @@
-export default function newElement(
-  tag: string,
+export default function newElement<K extends keyof HTMLElementTagNameMap>(
+  tag: K,
   text: string,
   parent: HTMLElement | undefined = undefined,
   classes: string[] = [],
   attributes: Record<string, string> = {},
-): HTMLElement {
+): HTMLElementTagNameMap[K] {
   const element = document.createElement(tag);
   element.textContent = text;
   if (classes.length > 0) {
@@ -14,8 +14,8 @@ export default function newElement(
   for (const [key, value] of Object.entries(attributes)) {
     if (key === 'type' && value === 'text' && tag === 'input') {
       element.setAttribute('type', value);
-    } else if (key === 'type' && value === 'number' && tag === 'input') {
-      element.setAttribute('type', value);
+      // } else if (key === 'type' && value === 'number' && tag === 'input') {
+      //   element.setAttribute('type', value);
     } else if (key === 'readonly' && value === 'true' && tag === 'input') {
       element.setAttribute('readonly', '');
     } else {
