@@ -4,12 +4,12 @@ import {
   createWinner,
 } from './api';
 import { newElement } from './utils';
-import type { CarRaceElements } from './types';
+import type { CarRaceElements, Winner } from './types';
 import { startCarAnimation, resetCarAnimation } from './cars';
 
 interface RaceState {
   isRacing: boolean;
-  winners: { id: number; name: string; time: number }[];
+  winners: Winner[];
   racePromises: Promise<void>[];
 }
 
@@ -67,10 +67,11 @@ async function startRace(): Promise<void> {
     try {
       const result = await startCarAnimation(id, elements);
       if (result.success && result.time && raceState.winners.length === 0) {
-        const winner = {
+        const winner: Winner = {
           id,
           name: elements.nameElement.textContent ?? 'Unknown',
           time: result.time,
+          wins: 1,
         };
         raceState.winners.push(winner);
         await handleWinner(winner);
@@ -86,15 +87,11 @@ async function startRace(): Promise<void> {
 }
 
 async function resetRace(): Promise<void> {
-  // Останавливаем гонку
   raceState.isRacing = false;
-  
-  // Ждем завершения всех Promise'ов
   await Promise.allSettled(raceState.racePromises);
   raceState.racePromises = [];
   raceState.winners = [];
 
-  // Сбрасываем все машины
   const resetPromises = [...carElements.entries()].map(async ([id, elements]) => {
     await resetCarAnimation(id, elements);
   });
@@ -102,7 +99,7 @@ async function resetRace(): Promise<void> {
   await Promise.allSettled(resetPromises);
 }
 
-async function handleWinner(winner: { id: number; name: string; time: number }): Promise<void> {
+async function handleWinner(winner: Winner): Promise<void> {
   try {
     const existingWinner = await getWinner(winner.id);
     if (existingWinner) {
@@ -114,15 +111,12 @@ async function handleWinner(winner: { id: number; name: string; time: number }):
         });
       }
     } else {
-      await createWinner({
-        id: winner.id,
-        wins: 1,
-        time: winner.time,
-      });
+      await createWinner(winner);
     }
     showWinnerMessage(winner.name, winner.time);
   } catch (error) {
-    console.error('Error handling winner:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error('Error handling winner:', errorMessage);
   }
 }
 

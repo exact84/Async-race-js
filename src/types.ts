@@ -4,11 +4,6 @@ export interface Car {
   color: string;
 }
 
-export interface RaceWinner extends Car {
-  time: number;
-  wins: number;
-}
-
 export interface EngineResponse {
   velocity: number;
   distance: number;
@@ -16,6 +11,7 @@ export interface EngineResponse {
 
 export interface Winner {
   id: number;
+  name: string;
   wins: number;
   time: number;
 }
@@ -44,6 +40,13 @@ export interface CarRaceElements {
   nameElement: HTMLElement;
 }
 
+export type SortOrder = 'ASC' | 'DESC';
+
+export interface SortState {
+  field: 'wins' | 'time';
+  order: SortOrder;
+}
+
 export interface AppState {
   garage: {
     page: number;
@@ -55,9 +58,6 @@ export interface AppState {
   };
   winners: {
     page: number;
-    sort: {
-      field: 'wins' | 'time';
-      order: 'ASC' | 'DESC';
-    };
+    sort: SortState;
   };
 }

@@ -1,12 +1,7 @@
 import { newElement } from './utils';
 import { getWinners, getCar } from './api';
 import { stateManager } from './state';
-
-type SortOrder = 'ASC' | 'DESC';
-interface SortState {
-  field: 'wins' | 'time';
-  order: SortOrder;
-}
+import type { SortOrder, SortState } from './types';
 
 async function displayWinners(
   page: number,
@@ -48,7 +43,6 @@ export function createWinners(container: HTMLElement): void {
   const state = stateManager.getState();
   const winnersSection = newElement('section', '', container, ['winners-section']);
 
-  // Добавляем заголовки в начале
   const pageNumber = state.winners.page.toString();
   const titleH2 = newElement('h2', 'Winners (0)', winnersSection);
   const pageH3 = newElement('h3', `Page #${pageNumber}`, winnersSection);
