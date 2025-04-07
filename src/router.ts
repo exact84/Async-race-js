@@ -1,13 +1,20 @@
-import renderRace from './race';
-import createGarage from './index';
-import newElement from './newElement';
+import { createWinners } from './winners';
+import { createGarage } from './garage';
+import { newElement } from './utils';
 
 const ROUTES = {
   HOME: '/',
-  WHEEL: '/race',
+  WINNERS: '/winners',
   ERROR: '/error',
   HOME_ALIAS: '/async-race/',
 } as const;
+
+interface RouterGlobal {
+  appRouter?: Router;
+}
+
+const routerGlobal: RouterGlobal = {};
+
 export default class Router {
   private readonly routes: Record<string, () => void>;
   private readonly root: HTMLElement;
@@ -18,13 +25,15 @@ export default class Router {
       [ROUTES.HOME]: (): void => {
         this.renderHome();
       },
-      [ROUTES.WHEEL]: (): void => {
-        this.renderRandomWheel();
+      [ROUTES.WINNERS]: (): void => {
+        this.renderWinners();
       },
       [ROUTES.ERROR]: (): void => {
         this.renderErrorPage();
       },
     };
+
+    routerGlobal.appRouter = this;
 
     globalThis.addEventListener('popstate', () => {
       this.handleRouteChange();
@@ -56,12 +65,12 @@ export default class Router {
 
   private renderHome(): void {
     this.root.replaceChildren();
-    createGarage(this);
+    createGarage(this.root);
   }
 
-  private renderRandomWheel(): void {
+  private renderWinners(): void {
     this.root.replaceChildren();
-    renderRace(this);
+    createWinners(this.root);
   }
 
   private renderErrorPage(): void {
@@ -71,11 +80,11 @@ export default class Router {
     newElement('h2', 'Page Not Found', this.root);
     newElement('p', 'The page you are looking for does not exist.', this.root);
 
-    const backButton = newElement('button', 'Back to Home', this.root, [
-      'start-btn',
-    ]);
+    const backButton = newElement('button', 'Back to Home', this.root);
     backButton.addEventListener('click', () => {
       this.navigate(ROUTES.HOME);
     });
   }
 }
+
+export { routerGlobal };

@@ -1,5 +1,8 @@
 body {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  background-color: antiquewhite;
 }
 
 .modal-overlay {
@@ -15,50 +18,187 @@ body {
   z-index: 1000;
 }
 
-.modal-content {
+.winner-modal {
   background-color: white;
   padding: 20px;
-  border-radius: 5px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-  max-width: 80%;
-  width: 500px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
 }
 
-.modal-textarea {
-  width: 95%;
-  margin: 15px 0;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  resize: vertical;
-  font-family: inherit;
-}
-
-.modal-buttons {
+.winner-message {
   display: flex;
-  justify-content: flex-end;
+  flex-direction: column;
   gap: 10px;
-  margin-top: 15px;
 }
 
-.modal-btn {
-  padding: 8px 15px;
+.close-btn {
+  padding: 8px 16px;
+  background-color: #4caf50;
+  color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  font-weight: bold;
 }
 
-.cancel-btn {
-  background-color: #f1f1f1;
-  color: #333;
+.close-btn:hover {
+  background-color: #45a049;
 }
 
-.confirm-btn {
-  background-color: #4ecdc4;
+.car-management {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.car-form {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.car-input {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  width: 200px;
+}
+
+.color-input {
+  width: 50px;
+  height: 30px;
+  padding: 0;
+  border: none;
+  cursor: pointer;
+}
+
+.form-btn {
+  padding: 8px 16px;
+  background-color: #2196f3;
   color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
-body.modal-open {
-  overflow: hidden;
+.form-btn:hover {
+  background-color: #1976d2;
+}
+
+.form-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.race-controls {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.race-btn,
+.reset-btn {
+  padding: 8px 16px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.race-btn:hover,
+.reset-btn:hover {
+  background-color: #45a049;
+}
+
+.race-btn:disabled,
+.reset-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.car-controls {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.car-btn {
+  padding: 6px 12px;
+  background-color: #2196f3;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.car-btn:hover {
+  background-color: #1976d2;
+}
+
+.engine-btn {
+  padding: 6px 12px;
+  background-color: #ff9800;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.engine-btn:hover {
+  background-color: #f57c00;
+}
+
+.engine-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.navigation {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  padding: 10px;
+  background-color: #f5f5f5;
+}
+
+.nav-btn {
+  padding: 8px 16px;
+  background-color: #2196f3;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.nav-btn:hover {
+  background-color: #1976d2;
+}
+
+.content {
+  padding: 20px;
+}
+
+.garage-section,
+.winners-section {
+  margin-top: 20px;
+}
+
+.winners-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.winners-table th,
+.winners-table td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.winners-table th {
+  background-color: #f5f5f5;
+  font-weight: bold;
 }
