@@ -1,4 +1,4 @@
-export default function newElement<K extends keyof HTMLElementTagNameMap>(
+export function newElement<K extends keyof HTMLElementTagNameMap>(
   tag: K,
   text: string,
   parent: HTMLElement | undefined = undefined,
@@ -12,10 +12,8 @@ export default function newElement<K extends keyof HTMLElementTagNameMap>(
   }
 
   for (const [key, value] of Object.entries(attributes)) {
-    if (key === 'type' && value === 'text' && tag === 'input') {
+    if (key === 'type' && tag === 'input') {
       element.setAttribute('type', value);
-      // } else if (key === 'type' && value === 'number' && tag === 'input') {
-      //   element.setAttribute('type', value);
     } else if (key === 'readonly' && value === 'true' && tag === 'input') {
       element.setAttribute('readonly', '');
     } else {
