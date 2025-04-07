@@ -12,6 +12,7 @@ export default {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist'),
     clean: true,
+    publicPath: '/',
   },
   resolve: {
     extensions: ['.ts', '.js'],
@@ -28,8 +29,17 @@ export default {
         use: ['style-loader', 'css-loader'],
       },
       {
-        test: /\.(png|svg|jpg|jpeg|gif)$/i,
-        type: 'asset/resource',
+        test: /\.(png|svg|jpg|jpeg|gif|jfif)$/i,
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              name: '[name].[ext]',
+              outputPath: 'assets/',
+              publicPath: '/assets/',
+            },
+          },
+        ],
       },
       {
         test: /\.mp3$/,
@@ -47,7 +57,7 @@ export default {
   mode: 'development',
   devServer: {
     static: './dist',
-    port: 3000,
+    port: 3002,
     historyApiFallback: true,
   },
 };
