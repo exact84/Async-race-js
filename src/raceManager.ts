@@ -33,6 +33,10 @@ export function unregisterCar(id: number): void {
   carElements.delete(id);
 }
 
+export function cleanRaceist(): void {
+  carElements.clear();
+}
+
 export function setupRaceControls(container: HTMLElement): void {
   
   const raceBtn = newElement('button', 'RACE', container, ['race-btn']);
@@ -42,7 +46,7 @@ export function setupRaceControls(container: HTMLElement): void {
   raceBtn.addEventListener('click', () => {
     if (raceState.isRacing) return;
     void startRace().finally(() => {
-      raceBtn.disabled = false;
+      // raceBtn.disabled = false;
     });
     raceBtn.disabled = true;
     resetBtn.disabled = false;
@@ -101,18 +105,26 @@ async function resetRace(): Promise<void> {
 async function handleWinner(winner: Winner): Promise<void> {
   try {
     const existingWinner = await getWinner(winner.id);
+
     if (existingWinner) {
-      if (winner.time < existingWinner.time) {
-        await updateWinner(winner.id, {
-          ...existingWinner,
-          time: winner.time,
-          wins: existingWinner.wins + 1,
-        });
-      }
+      let newTime = existingWinner.time;
+      if (winner.time < existingWinner.time) { 
+        newTime = winner.time; 
+        console.log('winner.time < existingWinner.time', existingWinner.wins);
+      } 
+      await updateWinner(winner.id, {
+        ...existingWinner,
+        time: newTime,
+        wins: existingWinner.wins + 1,
+      });
+
+      console.log('winner.time > existingWinner.time', existingWinner.wins);
     } else {
+      
+      console.log('winner NEW:', winner.id, winner.wins);
       await createWinner(winner);
     }
-    showWinnerMessage(winner.name, winner.time);
+   showWinnerMessage(winner.name, winner.time);
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     console.error('Error handling winner:', errorMessage);
