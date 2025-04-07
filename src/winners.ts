@@ -5,6 +5,8 @@ import type { SortOrder, SortState } from './types';
 import priusSvg from './assets/svg2.svg';
 import { updateSvgColor } from './cars';
 
+let totalCount = 0;
+
 async function displayWinners(
   page: number,
   tbody: HTMLElement,
@@ -75,14 +77,22 @@ export function createWinners(container: HTMLElement): void {
   timeHeader.style.cursor = 'pointer';
 
   const tbody = newElement('tbody', '', table);
+  
+  const paginationContainer = newElement('div', '', winnersSection, ['pagination']);
+  const prevBtn = newElement('button', 'PREV', paginationContainer, ['pagination-btn']);
+  const nextBtn = newElement('button', 'NEXT', paginationContainer, ['pagination-btn']);
 
   const updateWinners = async (): Promise<void> => {
     try {
-      const totalCount = await displayWinners(state.winners.page, tbody, state.winners.sort);
+      totalCount = await displayWinners(state.winners.page, tbody, state.winners.sort);
       titleH2.textContent = `Winners (${totalCount.toString()})`;
       pageH3.textContent = `Page #${state.winners.page.toString()}`;
 
       updateSortIndicators();
+      
+      const maxPage = Math.ceil(totalCount / 10);
+      prevBtn.disabled = state.winners.page <= 1;
+      nextBtn.disabled = state.winners.page >= maxPage;
     } catch (error) {
       if (error instanceof Error) {
         console.error('Error updating winners:', error.message);
@@ -116,6 +126,20 @@ export function createWinners(container: HTMLElement): void {
     const newOrder: SortOrder = currentSort.field === 'time' && currentSort.order === 'ASC' ? 'DESC' : 'ASC';
     stateManager.updateWinnersSort('time', newOrder);
     void updateWinners();
+  });
+  
+  prevBtn.addEventListener('click', () => {
+    if (state.winners.page > 1) {
+      stateManager.updateWinnersPage(state.winners.page - 1);
+      void updateWinners();
+    }
+  });
+  
+  nextBtn.addEventListener('click', () => {
+    if (state.winners.page < Math.ceil(totalCount / 10)) {
+      stateManager.updateWinnersPage(state.winners.page + 1);
+      void updateWinners();
+    }
   });
 
   void updateWinners();

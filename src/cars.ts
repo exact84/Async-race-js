@@ -4,7 +4,7 @@ import { selectCar, removeCar } from './carManagement';
 import type { CarControls } from './types';
 import priusSvg from './assets/svg2.svg';
 import flagJFIF from './assets/finish.png';
-import { registerCarForRace } from './raceManager';
+import { cleanRaceist, registerCarForRace } from './raceManager';
 import { stateManager } from './state';
 
 const MS_IN_SECOND = 1000;
@@ -16,15 +16,14 @@ export function setCarControls(controls: CarControls): void {
   currentControls = controls;
 }
 
-function updateSvgColor(svgDoc: Document, color: string): void {
-  const textElements = svgDoc.querySelectorAll('text');
-  const pathElements = svgDoc.querySelectorAll('path');
-
-  if (textElements[0]) {
-    textElements[0].style.fill = color;
+export function updateSvgColor(svgDoc: Document, color: string): void {
+    const textElement = svgDoc.querySelector('text');
+  if (textElement) {
+    textElement.style.fill = color;
   }
-  if (pathElements[0]) {
-    pathElements[0].style.stroke = color;
+  const svgElement = svgDoc.querySelector('path');
+  if (svgElement) {
+    svgElement.style.stroke = color;
   }
 }
 
@@ -44,6 +43,7 @@ export async function showListCars(
   newElement('h4', `Page #${state.garage.page.toString()}`, titleContainer);
 
   const carList = newElement('ul', '', carsContainer, ['car-list']);
+  cleanRaceist();
 
   for (const car of data.cars) {
     const carContainer = newElement('div', '', carList, ['car-container']);
@@ -75,14 +75,6 @@ export async function showListCars(
     carImg.addEventListener('load', () => {
       const svgDoc = carImg.contentDocument;
       if (svgDoc) {
-        // const textElement = svgDoc.querySelector('text');
-        // if (textElement) {
-        //   textElement.style.fill = car.color;
-        // }
-        // const svgElement = svgDoc.querySelector('path');
-        // if (svgElement) {
-        //   svgElement.style.stroke = car.color;
-        // }
         updateSvgColor(svgDoc, car.color);
       }
     });
@@ -132,6 +124,29 @@ export async function showListCars(
     });
   }
 
+  const paginationContainer = newElement('div', '', carsContainer, ['pagination']);
+  const prevBtn = newElement('button', 'PREV', paginationContainer, ['pagination-btn']);
+  const nextBtn = newElement('button', 'NEXT', paginationContainer, ['pagination-btn']);
+  
+  const totalPages = Math.ceil(data.totalCount / 7);
+  
+  prevBtn.disabled = state.garage.page <= 1;
+  nextBtn.disabled = state.garage.page >= totalPages;
+  
+  prevBtn.addEventListener('click', () => {
+    if (state.garage.page > 1) {
+      stateManager.updateGaragePage(state.garage.page - 1);
+      void showListCars(container);
+    }
+  });
+  
+  nextBtn.addEventListener('click', () => {
+    if (state.garage.page < totalPages) {
+      stateManager.updateGaragePage(state.garage.page + 1);
+      void showListCars(container);
+    }
+  });
+
   return data.totalCount;
 }
 
@@ -169,13 +184,13 @@ export async function startCarAnimation(
       time: (Date.now() - startTime) / MS_IN_SECOND 
     };
   } catch {
+    // elements.carImg.style.transition = 'none';
+    
     const currentPos = elements.carImg.getBoundingClientRect().left - elements.container.getBoundingClientRect().left;
     elements.carImg.style.transition = 'none';
     requestAnimationFrame(() => {
       elements.carImg.style.transform = `translateX(${String(currentPos)}px)`;
     });
-    startBtn.disabled = false;
-    resetBtn.disabled = true;
     return { success: false };
   }
 }
