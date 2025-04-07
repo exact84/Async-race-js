@@ -2,6 +2,8 @@ import { newElement } from './utils';
 import { getWinners, getCar } from './api';
 import { stateManager } from './state';
 import type { SortOrder, SortState } from './types';
+import priusSvg from './assets/svg2.svg';
+import { updateSvgColor } from './cars';
 
 async function displayWinners(
   page: number,
@@ -22,8 +24,20 @@ async function displayWinners(
       newElement('td', position.toString(), row);
 
       const carCell = newElement('td', '', row);
-      const carIcon = newElement('div', '', carCell, ['car-icon']);
-      carIcon.style.backgroundColor = car.color;
+
+      const carImg = newElement('object', '', carCell, ['car-svg']);
+      carImg.type = 'image/svg+xml';
+      carImg.data = priusSvg;
+      carImg.width = '100';
+      carImg.height = '40';
+      carImg.style.transform = 'translateX(0)';
+  
+      carImg.addEventListener('load', () => {
+        const svgDoc = carImg.contentDocument;
+        if (svgDoc) {
+          updateSvgColor(svgDoc, car.color);
+        }
+      });
 
       newElement('td', car.name, row);
       newElement('td', winner.wins.toString(), row);
@@ -67,10 +81,26 @@ export function createWinners(container: HTMLElement): void {
       const totalCount = await displayWinners(state.winners.page, tbody, state.winners.sort);
       titleH2.textContent = `Winners (${totalCount.toString()})`;
       pageH3.textContent = `Page #${state.winners.page.toString()}`;
+
+      updateSortIndicators();
     } catch (error) {
       if (error instanceof Error) {
         console.error('Error updating winners:', error.message);
       }
+    }
+  };
+
+  const updateSortIndicators = (): void => {
+    winsHeader.textContent = 'Wins';
+    timeHeader.textContent = 'Best time (seconds)';
+
+    const { field, order } = state.winners.sort;
+    const indicator = order === 'ASC' ? ' ↑' : ' ↓';
+
+    if (field === 'wins') {
+      winsHeader.textContent += indicator;
+    } else if (field === 'time') {
+      timeHeader.textContent += indicator;
     }
   };
 
