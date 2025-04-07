@@ -1,10 +1,10 @@
-import { createCar, deleteCar, updateCar, generateRandomCars, deleteWinner } from './api';
+import { createCar, deleteCar, updateCar, deleteWinner, generateRandomCars } from './api';
 import type { Car, CarControls } from './types';
 import { newElement } from './utils';
 import { showListCars, setCarControls } from './cars';
 import { stateManager } from './state';
 
-export function setupCarManagement(container: HTMLElement): void {
+export function setupCarManagement(container: HTMLElement, carsListContainer?: HTMLElement): void {
 
   const createForm = newElement('form', '', container, ['create-form']);
   const createNameInput = newElement('input', '', createForm, ['car-name'],   {
@@ -60,7 +60,7 @@ export function setupCarManagement(container: HTMLElement): void {
         createNameInput.value = '';
         createColorInput.value = '#000000';
         stateManager.updateCreateForm('', '#000000');
-        await showListCars(container);
+        await showListCars(carsListContainer ?? container);
       }
     })();
   });
@@ -76,7 +76,7 @@ export function setupCarManagement(container: HTMLElement): void {
       if (name) {
         await updateCar(id, { name, color });
         resetUpdateForm(carControls);
-        await showListCars(container);
+        await showListCars(carsListContainer ?? container);
       }
     })();
   });
@@ -86,9 +86,9 @@ export function setupCarManagement(container: HTMLElement): void {
   ]);
   generateBtn.addEventListener('click', () => {
     void (async (): Promise<void> => {
-          // убрать потом параметр 10
-      await generateRandomCars(10);
-      await showListCars(container);
+          // убрать потом параметр 3
+      await generateRandomCars(3);
+      await showListCars(carsListContainer ?? container);
     })();
   });
 }
