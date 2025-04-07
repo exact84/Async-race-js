@@ -1,0 +1,71 @@
+.winners-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.winners-section {
+  margin-top: 20px;
+}
+
+.winners-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.winners-table th,
+.winners-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.winners-table th {
+  background-color: #4a90e2;
+  color: white;
+  font-weight: bold;
+}
+
+.winners-table tr:nth-child(even) {
+  background-color: #fafafa;
+}
+
+.winners-table tr:hover {
+  background-color: #f0f0f0;
+}
+
+.car-icon {
+  width: 50px;
+  height: 30px;
+  border-radius: 4px;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.pagination-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  background-color: #4a90e2;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background-color: #357abd;
+}
+
+.pagination-btn:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
