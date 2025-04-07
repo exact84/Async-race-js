@@ -34,10 +34,9 @@ export function unregisterCar(id: number): void {
 }
 
 export function setupRaceControls(container: HTMLElement): void {
-  const controlsContainer = newElement('div', '', container, ['race-controls']);
   
-  const raceBtn = newElement('button', 'RACE', controlsContainer, ['race-btn']);
-  const resetBtn = newElement('button', 'RESET', controlsContainer, ['reset-btn']);
+  const raceBtn = newElement('button', 'RACE', container, ['race-btn']);
+  const resetBtn = newElement('button', 'RESET', container, ['reset-btn']);
   resetBtn.disabled = true;
 
   raceBtn.addEventListener('click', () => {

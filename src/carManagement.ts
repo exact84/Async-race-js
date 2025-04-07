@@ -20,7 +20,7 @@ export function setupCarManagement(container: HTMLElement): void {
     value: stateManager.getState().garage.createColor,
   });
 
-  const createBtn = newElement('button', 'CREATE', createForm);
+  const createBtn = newElement('button', 'CREATE', createForm, ['race-btn']);
 
   const updateForm = newElement('form', '', container, ['update-form']);
   const updateNameInput = newElement('input', '', updateForm, ['car-name'], {
@@ -38,7 +38,7 @@ export function setupCarManagement(container: HTMLElement): void {
   });
   updateColorInput.disabled = !stateManager.getState().garage.selectedCarId;
 
-  const updateBtn = newElement('button', 'UPDATE', updateForm);
+  const updateBtn = newElement('button', 'UPDATE', updateForm, ['race-btn']);
   updateBtn.disabled = !stateManager.getState().garage.selectedCarId;
 
   const carControls: CarControls = {

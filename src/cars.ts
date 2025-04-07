@@ -31,8 +31,9 @@ function updateSvgColor(svgDoc: Document, color: string): void {
 export async function showListCars(
   container: HTMLElement,
 ): Promise<number> {
+  container.innerHTML = '';
   const carsContainer = newElement('div', '', container, ['cars-container']);
-  const titleContainer = newElement('div', '', carsContainer, ['cars-title']);
+  const titleContainer = newElement('div', '', carsContainer);
 
   const state = stateManager.getState();
   const data = await getCars(state.garage.page, 7);
@@ -46,7 +47,7 @@ export async function showListCars(
 
   for (const car of data.cars) {
     const carContainer = newElement('div', '', carList, ['car-container']);
-    carContainer.dataset.id = car.id.toString(); // сохранили id
+    carContainer.dataset.id = car.id.toString();
 
     const controls = newElement('div', '', carContainer, ['car-controls']);
     const selectBtn = newElement('button', 'SELECT', controls, [
