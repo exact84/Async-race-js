@@ -106,10 +106,12 @@ export async function showListCars(
 
     startBtn.addEventListener('click', () => {
       void (async (): Promise<void> => {
+        raceState.isRacing = true;
         const result = await startCarAnimation(car.id, {container: carContainer, carImg, startBtn, resetCarBtn});
         if (!result.success) {
           console.log('Engine was broken:', car.name);
         }
+        raceState.isRacing = false;
       })();
     });
 
@@ -157,7 +159,7 @@ export async function startCarAnimation(
 ): Promise<{ success: boolean; time?: number }> {
   const startBtn = elements.startBtn;
   const resetBtn = elements.resetCarBtn;
-  
+
   try {
     startBtn.disabled = true;
     resetBtn.disabled = false;
@@ -181,20 +183,13 @@ export async function startCarAnimation(
       throw new Error('Engine failure');
     }
 
-    if (!raceState.isRacing) {
-      elements.carImg.style.transition = 'none';
-      elements.carImg.style.transform = 'translateX(0)';
-      return { success: false };
-    }
-
     return { 
       success: true, 
       time: (Date.now() - startTime) / MS_IN_SECOND 
     };
   } catch {
-    elements.carImg.style.transition = 'none';
+    // elements.carImg.style.transition = 'none';
     const currentPos = elements.carImg.getBoundingClientRect().left - elements.container.getBoundingClientRect().left;
-    elements.carImg.style.transition = 'none';
     requestAnimationFrame(() => {
       elements.carImg.style.transform = `translateX(${String(currentPos - MARGIN_OFFSET)}px)`;
     });
