@@ -84,6 +84,7 @@ export function createWinners(container: HTMLElement): void {
 
   const updateWinners = async (): Promise<void> => {
     try {
+      const state = stateManager.getState();
       totalCount = await displayWinners(state.winners.page, tbody, state.winners.sort);
       titleH2.textContent = `Winners (${totalCount.toString()})`;
       pageH3.textContent = `Page #${state.winners.page.toString()}`;

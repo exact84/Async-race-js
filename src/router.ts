@@ -18,6 +18,8 @@ const routerGlobal: RouterGlobal = {};
 export default class Router {
   private readonly routes: Record<string, () => void>;
   private readonly root: HTMLElement;
+  private garageContainer: HTMLElement | undefined = undefined;
+  private winnersContainer: HTMLElement | undefined = undefined;
 
   constructor(root: HTMLElement) {
     this.root = root;
@@ -64,13 +66,33 @@ export default class Router {
   }
 
   private renderHome(): void {
-    this.root.replaceChildren();
-    createGarage(this.root);
+    if (this.winnersContainer) {
+      this.winnersContainer.style.display = 'none';
+    }
+    
+    if (this.garageContainer) {
+      this.garageContainer.style.display = 'block';
+    } else {
+      this.garageContainer = document.createElement('div');
+      this.garageContainer.className = 'garage-view';
+      this.root.append(this.garageContainer);
+      createGarage(this.garageContainer);
+    }
   }
 
   private renderWinners(): void {
-    this.root.replaceChildren();
-    createWinners(this.root);
+    if (this.garageContainer) {
+      this.garageContainer.style.display = 'none';
+    }
+    
+    if (this.winnersContainer) {
+      this.winnersContainer.style.display = 'block';
+    } else {
+      this.winnersContainer = document.createElement('div');
+      this.winnersContainer.className = 'winners-view';
+      this.root.append(this.winnersContainer);
+      createWinners(this.winnersContainer);
+    }
   }
 
   private renderErrorPage(): void {
