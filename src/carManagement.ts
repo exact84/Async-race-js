@@ -1,4 +1,10 @@
-import { createCar, deleteCar, updateCar, deleteWinner, generateRandomCars } from './api';
+import {
+  createCar,
+  deleteCar,
+  updateCar,
+  deleteWinner,
+  generateRandomCars,
+} from './api';
 import type { Car, CarControls } from './types';
 import { newElement } from './utils';
 import { showListCars, setCarControls } from './cars';
@@ -6,10 +12,12 @@ import { stateManager } from './state';
 
 const COUNT_CARS = 100;
 
-export function setupCarManagement(container: HTMLElement, carsListContainer?: HTMLElement): void {
-
+export function setupCarManagement(
+  container: HTMLElement,
+  carsListContainer?: HTMLElement,
+): void {
   const createForm = newElement('form', '', container, ['create-form']);
-  const createNameInput = newElement('input', '', createForm, ['car-name'],   {
+  const createNameInput = newElement('input', '', createForm, ['car-name'], {
     type: 'text',
     name: 'car-name',
     placeholder: 'Enter car name',
@@ -57,7 +65,7 @@ export function setupCarManagement(container: HTMLElement, carsListContainer?: H
     void (async (): Promise<void> => {
       const name = createNameInput.value.trim();
       const color = createColorInput.value;
-  
+
       if (name) {
         await createCar(name, color);
         createNameInput.value = '';
@@ -72,10 +80,10 @@ export function setupCarManagement(container: HTMLElement, carsListContainer?: H
     void (async (): Promise<void> => {
       const id = carControls.selectedCarId;
       if (!id) return;
-  
+
       const name = updateNameInput.value.trim();
       const color = updateColorInput.value;
-  
+
       if (name) {
         await updateCar(id, { name, color });
         resetUpdateForm(carControls);
@@ -108,7 +116,7 @@ export function selectCar(car: Car, controls: CarControls): void {
   if (controls.updateBtn instanceof HTMLButtonElement) {
     controls.updateBtn.disabled = false;
   }
-  
+
   stateManager.updateUpdateForm(car.name, car.color);
   stateManager.updateSelectedCar(car.id);
 }

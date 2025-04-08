@@ -37,6 +37,7 @@
     "stylelint": "stylelint \"src/**/*.css\"",
     "fix": "eslint . --fix && stylelint '**/*.css' --fix && prettier --write .",
     "format": "prettier --write .",
+    "ci:format": "prettier --check .",
     "prepare": "husky"
   },
   "repository": {

@@ -13,7 +13,12 @@ async function displayWinners(
   sort: SortState,
 ): Promise<number> {
   try {
-    const { winners, totalCount } = await getWinners(page, 10, sort.field, sort.order);
+    const { winners, totalCount } = await getWinners(
+      page,
+      10,
+      sort.field,
+      sort.order,
+    );
     tbody.innerHTML = '';
 
     for (const winner of winners) {
@@ -33,7 +38,7 @@ async function displayWinners(
       carImg.width = '100';
       carImg.height = '40';
       carImg.style.transform = 'translateX(0)';
-  
+
       carImg.addEventListener('load', () => {
         const svgDoc = carImg.contentDocument;
         if (svgDoc) {
@@ -57,7 +62,9 @@ async function displayWinners(
 
 export function createWinners(container: HTMLElement): void {
   const state = stateManager.getState();
-  const winnersSection = newElement('section', '', container, ['winners-section']);
+  const winnersSection = newElement('section', '', container, [
+    'winners-section',
+  ]);
 
   const pageNumber = state.winners.page.toString();
   const titleH2 = newElement('h2', 'Winners (0)', winnersSection);
@@ -77,20 +84,30 @@ export function createWinners(container: HTMLElement): void {
   timeHeader.style.cursor = 'pointer';
 
   const tbody = newElement('tbody', '', table);
-  
-  const paginationContainer = newElement('div', '', winnersSection, ['pagination']);
-  const prevBtn = newElement('button', 'PREV', paginationContainer, ['pagination-btn']);
-  const nextBtn = newElement('button', 'NEXT', paginationContainer, ['pagination-btn']);
+
+  const paginationContainer = newElement('div', '', winnersSection, [
+    'pagination',
+  ]);
+  const prevBtn = newElement('button', 'PREV', paginationContainer, [
+    'pagination-btn',
+  ]);
+  const nextBtn = newElement('button', 'NEXT', paginationContainer, [
+    'pagination-btn',
+  ]);
 
   const updateWinners = async (): Promise<void> => {
     try {
       const state = stateManager.getState();
-      totalCount = await displayWinners(state.winners.page, tbody, state.winners.sort);
+      totalCount = await displayWinners(
+        state.winners.page,
+        tbody,
+        state.winners.sort,
+      );
       titleH2.textContent = `Winners (${totalCount.toString()})`;
       pageH3.textContent = `Page #${state.winners.page.toString()}`;
 
       updateSortIndicators();
-      
+
       const maxPage = Math.ceil(totalCount / 10);
       prevBtn.disabled = state.winners.page <= 1;
       nextBtn.disabled = state.winners.page >= maxPage;
@@ -117,25 +134,31 @@ export function createWinners(container: HTMLElement): void {
 
   winsHeader.addEventListener('click', () => {
     const currentSort = state.winners.sort;
-    const newOrder: SortOrder = currentSort.field === 'wins' && currentSort.order === 'ASC' ? 'DESC' : 'ASC';
+    const newOrder: SortOrder =
+      currentSort.field === 'wins' && currentSort.order === 'ASC'
+        ? 'DESC'
+        : 'ASC';
     stateManager.updateWinnersSort('wins', newOrder);
     void updateWinners();
   });
 
   timeHeader.addEventListener('click', () => {
     const currentSort = state.winners.sort;
-    const newOrder: SortOrder = currentSort.field === 'time' && currentSort.order === 'ASC' ? 'DESC' : 'ASC';
+    const newOrder: SortOrder =
+      currentSort.field === 'time' && currentSort.order === 'ASC'
+        ? 'DESC'
+        : 'ASC';
     stateManager.updateWinnersSort('time', newOrder);
     void updateWinners();
   });
-  
+
   prevBtn.addEventListener('click', () => {
     if (state.winners.page > 1) {
       stateManager.updateWinnersPage(state.winners.page - 1);
       void updateWinners();
     }
   });
-  
+
   nextBtn.addEventListener('click', () => {
     if (state.winners.page < Math.ceil(totalCount / 10)) {
       stateManager.updateWinnersPage(state.winners.page + 1);

@@ -1,11 +1,12 @@
 .garage-container {
-  font-family: Arial, sans-serif;
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
+  font-family: Arial, sans-serif;
 }
 
-.create-form, .update-form {
+.create-form,
+.update-form {
   display: flex;
   margin: 0;
 }
@@ -35,20 +36,24 @@
 }
 
 .control-btn {
+  cursor: pointer;
+
   padding: 8px 16px;
-  background-color: #f0f0f0;
   border: 1px solid #ddd;
   border-radius: 4px;
-  cursor: pointer;
+
+  background-color: #f0f0f0;
 }
 
 .generate-btn {
-  width: fit-content; 
+  cursor: pointer;
+
+  width: fit-content;
   padding: 8px 16px;
-  background-color: #f0f0f0;
   border: 1px solid #ddd;
   border-radius: 4px;
-  cursor: pointer;
+
+  background-color: #f0f0f0;
 }
 
 .actions {
@@ -58,52 +63,55 @@
 }
 
 .action-btn {
+  cursor: pointer;
   padding: 8px 16px;
   border: none;
   border-radius: 4px;
-  cursor: pointer;
 }
 
 .action-btn.primary {
-  background-color: #007bff;
   color: white;
+  background-color: #007bff;
 }
 
 .cars-container {
   display: flex;
   flex-direction: column;
+
+  padding: 10px;
   border: 1px solid #eee;
   border-radius: 4px;
-  padding: 10px;
 }
 
 .car-list {
-  list-style: none;
-  padding: 0;
   margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 .car-container {
   display: flex;
   flex-direction: column;
-  padding: 10px 0px;
+
   width: 100%;
+  padding: 10px 0;
   border-bottom: 1px solid #eee;
 }
 
 .select-btn {
-  background-color: #4caf50;
   color: white;
+  background-color: #4caf50;
 }
 
 .remove-btn {
-  background-color: #f44336;
   color: white;
+  background-color: #f44336;
 }
 
 .car-name {
-  font-weight: bold;
   margin: 0 10px;
+  font-weight: bold;
+
   /* -webkit-text-stroke: 1px black; */
 }
 
@@ -118,10 +126,11 @@
 }
 
 .finish-flag {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+
   width: 40px;
   height: 40px;
-  position: absolute;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
 }

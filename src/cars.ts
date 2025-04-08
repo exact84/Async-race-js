@@ -17,7 +17,7 @@ export function setCarControls(controls: CarControls): void {
 }
 
 export function updateSvgColor(svgDoc: Document, color: string): void {
-    const textElement = svgDoc.querySelector('text');
+  const textElement = svgDoc.querySelector('text');
   if (textElement) {
     textElement.style.fill = color;
   }
@@ -27,19 +27,14 @@ export function updateSvgColor(svgDoc: Document, color: string): void {
   }
 }
 
-export async function showListCars(
-  container: HTMLElement,
-): Promise<number> {
+export async function showListCars(container: HTMLElement): Promise<number> {
   container.innerHTML = '';
   const carsContainer = newElement('div', '', container, ['cars-container']);
   const titleContainer = newElement('div', '', carsContainer);
 
   const state = stateManager.getState();
   const data = await getCars(state.garage.page, 7);
-  newElement(
-    'h2',  `Garage (${data.totalCount.toString()})`, 
-    titleContainer,
-  );
+  newElement('h2', `Garage (${data.totalCount.toString()})`, titleContainer);
   newElement('h4', `Page #${state.garage.page.toString()}`, titleContainer);
 
   const carList = newElement('ul', '', carsContainer, ['car-list']);
@@ -83,7 +78,11 @@ export async function showListCars(
     flagImg.src = flagJFIF;
     flagImg.alt = 'finish';
 
-    registerCarForRace(car.id, {container: carContainer, carImg, startBtn, resetCarBtn}, nameElement);
+    registerCarForRace(
+      car.id,
+      { container: carContainer, carImg, startBtn, resetCarBtn },
+      nameElement,
+    );
 
     selectBtn.addEventListener('click', () => {
       if (currentControls) {
@@ -99,7 +98,7 @@ export async function showListCars(
         } catch (error) {
           if (error instanceof Error) {
             console.log('Failed to remove car:', error.message);
-          } 
+          }
         }
       })();
     });
@@ -107,7 +106,12 @@ export async function showListCars(
     startBtn.addEventListener('click', () => {
       void (async (): Promise<void> => {
         raceState.isRacing = true;
-        const result = await startCarAnimation(car.id, {container: carContainer, carImg, startBtn, resetCarBtn});
+        const result = await startCarAnimation(car.id, {
+          container: carContainer,
+          carImg,
+          startBtn,
+          resetCarBtn,
+        });
         if (!result.success) {
           console.log('Engine was broken:', car.name);
         }
@@ -117,27 +121,33 @@ export async function showListCars(
 
     resetCarBtn.addEventListener('click', () => {
       void (async (): Promise<void> => {
-        await resetCarAnimation(car.id, {carImg, startBtn, resetCarBtn});
+        await resetCarAnimation(car.id, { carImg, startBtn, resetCarBtn });
       })();
     });
   }
 
-  const paginationContainer = newElement('div', '', carsContainer, ['pagination']);
-  const prevBtn = newElement('button', 'PREV', paginationContainer, ['pagination-btn']);
-  const nextBtn = newElement('button', 'NEXT', paginationContainer, ['pagination-btn']);
-  
+  const paginationContainer = newElement('div', '', carsContainer, [
+    'pagination',
+  ]);
+  const prevBtn = newElement('button', 'PREV', paginationContainer, [
+    'pagination-btn',
+  ]);
+  const nextBtn = newElement('button', 'NEXT', paginationContainer, [
+    'pagination-btn',
+  ]);
+
   const totalPages = Math.ceil(data.totalCount / 7);
-  
+
   prevBtn.disabled = state.garage.page <= 1;
   nextBtn.disabled = state.garage.page >= totalPages;
-  
+
   prevBtn.addEventListener('click', () => {
     if (state.garage.page > 1) {
       stateManager.updateGaragePage(state.garage.page - 1);
       void showListCars(container);
     }
   });
-  
+
   nextBtn.addEventListener('click', () => {
     if (state.garage.page < totalPages) {
       stateManager.updateGaragePage(state.garage.page + 1);
@@ -155,7 +165,7 @@ export async function startCarAnimation(
     carImg: HTMLObjectElement;
     startBtn: HTMLButtonElement;
     resetCarBtn: HTMLButtonElement;
-  }
+  },
 ): Promise<{ success: boolean; time?: number }> {
   const startBtn = elements.startBtn;
   const resetBtn = elements.resetCarBtn;
@@ -166,7 +176,10 @@ export async function startCarAnimation(
 
     const { velocity, distance } = await startEngine(id);
     const duration = distance / velocity / MS_IN_SECOND;
-    const finishPosition = elements.container.offsetWidth - elements.carImg.offsetWidth - MARGIN_OFFSET;
+    const finishPosition =
+      elements.container.offsetWidth -
+      elements.carImg.offsetWidth -
+      MARGIN_OFFSET;
     const startTime = Date.now();
 
     if (!raceState.isRacing) {
@@ -183,13 +196,15 @@ export async function startCarAnimation(
       throw new Error('Engine failure');
     }
 
-    return { 
-      success: true, 
-      time: (Date.now() - startTime) / MS_IN_SECOND 
+    return {
+      success: true,
+      time: (Date.now() - startTime) / MS_IN_SECOND,
     };
   } catch {
     // elements.carImg.style.transition = 'none';
-    const currentPos = elements.carImg.getBoundingClientRect().left - elements.container.getBoundingClientRect().left;
+    const currentPos =
+      elements.carImg.getBoundingClientRect().left -
+      elements.container.getBoundingClientRect().left;
     requestAnimationFrame(() => {
       elements.carImg.style.transform = `translateX(${String(currentPos - MARGIN_OFFSET)}px)`;
     });
@@ -203,7 +218,7 @@ export async function resetCarAnimation(
     carImg: HTMLObjectElement;
     startBtn: HTMLButtonElement;
     resetCarBtn: HTMLButtonElement;
-  }
+  },
 ): Promise<void> {
   elements.carImg.style.transition = 'none';
   elements.carImg.style.transform = 'translateX(0)';

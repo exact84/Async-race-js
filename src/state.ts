@@ -47,7 +47,10 @@ class StateManager {
     this.state.garage.updateColor = color;
   }
 
-  public updateWinnersSort(field: 'wins' | 'time', order: 'ASC' | 'DESC'): void {
+  public updateWinnersSort(
+    field: 'wins' | 'time',
+    order: 'ASC' | 'DESC',
+  ): void {
     this.state.winners.sort = { field, order };
   }
 }

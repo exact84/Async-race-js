@@ -4,11 +4,11 @@ const API_BASE_URL = 'http://127.0.0.1:3000';
 
 export async function getCars(
   page = 1,
-  limit = 7
+  limit = 7,
 ): Promise<{ cars: Car[]; totalCount: number }> {
   try {
     const response = await fetch(
-      `${API_BASE_URL}/garage?_page=${String(page)}&_limit=${String(limit)}`
+      `${API_BASE_URL}/garage?_page=${String(page)}&_limit=${String(limit)}`,
     );
 
     if (!response.ok) {
@@ -23,7 +23,7 @@ export async function getCars(
 
     const totalCount = Number.parseInt(
       response.headers.get('X-Total-Count') ?? '0',
-      10
+      10,
     );
 
     return { cars: data, totalCount };
@@ -103,7 +103,7 @@ export async function generateRandomCars(count = 100): Promise<void> {
       'Lamborghini',
       'McLaren',
       'Bugatti',
-      'Toyota'
+      'Toyota',
     ];
     const carModels = [
       'Model S',
@@ -115,7 +115,7 @@ export async function generateRandomCars(count = 100): Promise<void> {
       'Aventador',
       'P1',
       'Chiron',
-      'Prius'
+      'Prius',
     ];
 
     const promises = Array.from({ length: count }, () => {
@@ -142,7 +142,7 @@ export async function startEngine(id: number): Promise<EngineResponse> {
       `${API_BASE_URL}/engine?id=${String(id)}&status=started`,
       {
         method: 'PATCH',
-      }
+      },
     );
 
     if (response.status === 404) throw new Error('Car not found');
@@ -160,7 +160,10 @@ export async function startEngine(id: number): Promise<EngineResponse> {
     return data;
   } catch (error) {
     if (error instanceof Error) {
-      console.error(`Error starting engine for car ${String(id)}:`, error.message);
+      console.error(
+        `Error starting engine for car ${String(id)}:`,
+        error.message,
+      );
     }
     throw error;
   }
@@ -188,7 +191,10 @@ export async function stopEngine(id: number): Promise<EngineResponse> {
     return data;
   } catch (error) {
     if (error instanceof Error) {
-      console.error(`Error stopping engine for car ${String(id)}:`, error.message);
+      console.error(
+        `Error stopping engine for car ${String(id)}:`,
+        error.message,
+      );
     }
     throw error;
   }
@@ -236,7 +242,7 @@ export async function getWinners(
 
     const totalCount = Number.parseInt(
       response.headers.get('X-Total-Count') ?? '0',
-      10
+      10,
     );
 
     return { winners: data, totalCount };
@@ -251,7 +257,7 @@ export async function getWinners(
 export async function getWinner(id: number): Promise<Winner | undefined> {
   try {
     const response = await fetch(`${API_BASE_URL}/winners/${String(id)}`);
-    
+
     if (!response.ok) {
       return undefined;
     }
@@ -385,17 +391,21 @@ function isObject(obj: unknown): obj is Record<string, unknown> {
 }
 
 export function isCar(obj: unknown): obj is Car {
-  return isObject(obj)
-    && typeof obj.id === 'number'
-    && typeof obj.name === 'string'
-    && typeof obj.color === 'string';
+  return (
+    isObject(obj) &&
+    typeof obj.id === 'number' &&
+    typeof obj.name === 'string' &&
+    typeof obj.color === 'string'
+  );
 }
 
 function isWinner(obj: unknown): obj is Winner {
-  return isObject(obj)
-    && typeof obj.id === 'number'
-    && typeof obj.wins === 'number'
-    && typeof obj.time === 'number';
+  return (
+    isObject(obj) &&
+    typeof obj.id === 'number' &&
+    typeof obj.wins === 'number' &&
+    typeof obj.time === 'number'
+  );
 }
 
 function isCarArray(data: unknown): data is Car[] {
@@ -409,7 +419,7 @@ function isWinnerArray(obj: unknown): obj is Winner[] {
 async function safeFetch<T>(
   url: string,
   validate: (data: unknown) => data is T,
-  options?: RequestInit
+  options?: RequestInit,
 ): Promise<T> {
   const response = await fetch(url, options);
 

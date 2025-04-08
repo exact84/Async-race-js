@@ -7,23 +7,28 @@ body {
 
 .modal-overlay {
   position: fixed;
+  z-index: 1000;
   top: 0;
   left: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
+
+  background-color: rgb(0 0 0 / 50%);
 }
 
 .winner-modal {
-  background-color: white;
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+
   text-align: center;
+
+  background-color: white;
+  box-shadow: 0 2px 10px rgb(0 0 0 / 10%);
 }
 
 .winner-message {
@@ -33,12 +38,15 @@ body {
 }
 
 .close-btn {
+  cursor: pointer;
+
   padding: 8px 16px;
-  background-color: #4caf50;
-  color: white;
   border: none;
   border-radius: 4px;
-  cursor: pointer;
+
+  color: white;
+
+  background-color: #4caf50;
 }
 
 .close-btn:hover {
@@ -59,27 +67,31 @@ body {
 }
 
 .car-input {
+  width: 200px;
   padding: 8px;
   border: 1px solid #ddd;
   border-radius: 4px;
-  width: 200px;
 }
 
 .color-input {
+  cursor: pointer;
+
   width: 50px;
   height: 30px;
   padding: 0;
   border: none;
-  cursor: pointer;
 }
 
 .form-btn {
+  cursor: pointer;
+
   padding: 8px 16px;
-  background-color: #2196f3;
-  color: white;
   border: none;
   border-radius: 4px;
-  cursor: pointer;
+
+  color: white;
+
+  background-color: #2196f3;
 }
 
 .form-btn:hover {
@@ -87,24 +99,27 @@ body {
 }
 
 .form-btn:disabled {
-  background-color: #ccc;
   cursor: not-allowed;
+  background-color: #ccc;
 }
 
 .race-controls {
   display: flex;
-  margin-bottom: 0px;
+  margin-bottom: 0;
 }
 
 .race-btn,
 .reset-btn {
-  padding: 6px 16px;
+  cursor: pointer;
+
   margin: 0 10px;
-  background-color: #4caf50;
-  color: white;
+  padding: 6px 16px;
   border: none;
   border-radius: 4px;
-  cursor: pointer;
+
+  color: white;
+
+  background-color: #4caf50;
 }
 
 .race-btn:hover,
@@ -114,8 +129,8 @@ body {
 
 .race-btn:disabled,
 .reset-btn:disabled {
-  background-color: #ccc;
   cursor: not-allowed;
+  background-color: #ccc;
 }
 
 .car-controls {
@@ -125,14 +140,17 @@ body {
 }
 
 .car-btn {
+  cursor: pointer;
+
   padding: 6px 12px;
-  background-color: #2196f3;
-  color: white;
   border: none;
   border-radius: 4px;
-  cursor: pointer;
+
   font-size: 12px;
   font-weight: bold;
+  color: white;
+
+  background-color: #2196f3;
 }
 
 .car-btn:hover {
@@ -140,12 +158,15 @@ body {
 }
 
 .engine-btn {
+  cursor: pointer;
+
   padding: 6px 12px;
-  background-color: #ff9800;
-  color: white;
   border: none;
   border-radius: 4px;
-  cursor: pointer;
+
+  color: white;
+
+  background-color: #ff9800;
 }
 
 .engine-btn:hover {
@@ -153,34 +174,39 @@ body {
 }
 
 .engine-btn:disabled {
-  background-color: #ccc;
   cursor: not-allowed;
+  background-color: #ccc;
 }
 
 .nav {
   display: flex;
-  width: fit-content; 
   gap: 10px;
+
+  width: fit-content;
   margin-bottom: 20px;
   padding: 10px;
   border-bottom: 1px solid #e0e0e0;
 }
 
 .nav-btn {
+  cursor: pointer;
+
   padding: 10px 20px;
-  background-color: #2196f3;
-  color: white;
   border: none;
   border-radius: 5px;
-  cursor: pointer;
+
   font-size: 14px;
+  color: white;
+
+  background-color: #2196f3;
+
   transition: background-color 0.2s ease;
 }
 
 .nav-btn.active {
-  background-color: #06498b;
-  color: white;
   border-bottom: 2px solid #1565c0;
+  color: white;
+  background-color: #06498b;
 }
 
 .nav-btn:hover {
@@ -197,19 +223,19 @@ body {
 }
 
 .winners-table {
-  width: 100%;
   border-collapse: collapse;
+  width: 100%;
   margin-top: 20px;
 }
 
 .winners-table th,
 .winners-table td {
   padding: 10px;
-  text-align: left;
   border-bottom: 1px solid #ddd;
+  text-align: left;
 }
 
 .winners-table th {
-  background-color: #f5f5f5;
   font-weight: bold;
+  background-color: #f5f5f5;
 }

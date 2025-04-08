@@ -69,7 +69,7 @@ export default class Router {
     if (this.winnersContainer) {
       this.winnersContainer.style.display = 'none';
     }
-    
+
     if (this.garageContainer) {
       this.garageContainer.style.display = 'block';
     } else {
@@ -84,7 +84,7 @@ export default class Router {
     if (this.garageContainer) {
       this.garageContainer.style.display = 'none';
     }
-    
+
     if (this.winnersContainer) {
       this.winnersContainer.style.display = 'block';
     } else {
