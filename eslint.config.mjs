@@ -39,7 +39,6 @@ export default tseslint.config(
       'class-methods-use-this': 'error',
       'unicorn/prevent-abbreviations': 'off',
       'unicorn/filename-case': ['error', { case: 'camelCase' }],
-      // 'unicorn/no-array-instanceof': 'error', // deprecated
       'unicorn/prefer-query-selector': 'error',
       '@typescript-eslint/no-unnecessary-condition': 'off',
     },

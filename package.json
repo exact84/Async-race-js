@@ -1,7 +1,7 @@
 {
-  "name": "decision-making-tool",
+  "name": "async-race",
   "version": "1.0.0",
-  "description": "decision-making-tool",
+  "description": "async-race",
   "main": "index.js",
   "type": "module",
   "devDependencies": {

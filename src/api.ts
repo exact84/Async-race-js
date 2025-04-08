@@ -103,7 +103,7 @@ export async function generateRandomCars(count = 100): Promise<void> {
       'Lamborghini',
       'McLaren',
       'Bugatti',
-      'Koenigsegg'
+      'Toyota'
     ];
     const carModels = [
       'Model S',
@@ -115,7 +115,7 @@ export async function generateRandomCars(count = 100): Promise<void> {
       'Aventador',
       'P1',
       'Chiron',
-      'Jesko'
+      'Prius'
     ];
 
     const promises = Array.from({ length: count }, () => {
@@ -165,23 +165,6 @@ export async function startEngine(id: number): Promise<EngineResponse> {
     throw error;
   }
 }
-
-
-// export async function startEngine(id: number): Promise<EngineResponse> {
-//   try {
-//     const response = await fetch(
-//       `${API_BASE_URL}/engine?id=${String(id)}&status=started`,
-//       {
-//         method: 'PATCH',
-//       },
-//     );
-
-//     return await response.json();
-//   } catch (error) {
-//     console.error(`Error starting engine for car ${String(id)}:`, error);
-//     throw error;
-//   }
-// }
 
 export async function stopEngine(id: number): Promise<EngineResponse> {
   try {
@@ -265,30 +248,6 @@ export async function getWinners(
   }
 }
 
-// export async function getWinners(
-//   page = 1,
-//   limit = 10,
-//   sort = 'id',
-//   order = 'ASC',
-// ): Promise<{ winners: Winner[]; totalCount: number }> {
-//   try {
-//     const response = await fetch(
-//       `${API_BASE_URL}/winners?_page=${String(page)}&_limit=${String(limit)}&_sort=${sort}&_order=${order}`,
-//     );
-
-//     const winners: Winner[] = await response.json();
-//     const totalCount = Number.parseInt(
-//       response.headers.get('X-Total-Count') ?? '0',
-//       10,
-//     );
-
-//     return { winners, totalCount };
-//   } catch (error) {
-//     console.error('Error fetching winners:', error);
-//     return { winners: [], totalCount: 0 };
-//   }
-// }
-
 export async function getWinner(id: number): Promise<Winner | undefined> {
   try {
     const response = await fetch(`${API_BASE_URL}/winners/${String(id)}`);
@@ -311,33 +270,6 @@ export async function getWinner(id: number): Promise<Winner | undefined> {
     return undefined;
   }
 }
-
-// export async function getWinner(id: number): Promise<Winner | undefined> {
-//   try {
-//     const response = await fetch(`${API_BASE_URL}/winners/${String(id)}`);
-//     return response.ok ? (await response.json()) : undefined;
-//   } catch {
-//     return undefined;
-//   }
-// }
-
-// export async function createWinner(winner: Winner): Promise<Winner> {
-//   try {
-//     const response = await fetch(`${API_BASE_URL}/winners`, {
-//       method: 'POST',
-//       headers: {
-//         'Content-Type': 'application/json',
-//       },
-//       body: JSON.stringify(winner),
-//     });
-
-//     const data: Winner = await response.json();
-//     return data;
-//   } catch (error) {
-//     console.error('Error creating winner:', error);
-//     throw error;
-//   }
-// }
 
 export async function createWinner(winner: Winner): Promise<Winner> {
   try {
@@ -407,11 +339,11 @@ export async function deleteWinner(id: number): Promise<void> {
     });
 
     if (!response.ok) {
-      throw new Error(`Error deleting winner ${String(id)}`);
+      console.log(`No win results ${String(id)}`);
     }
   } catch (error) {
     if (error instanceof Error) {
-      console.error(`Error deleting winner ${String(id)}:`, error.message);
+      console.log(`Error deleting winner ${String(id)}:`, error.message);
     }
   }
 }
@@ -452,7 +384,7 @@ function isObject(obj: unknown): obj is Record<string, unknown> {
   return typeof obj === 'object' && obj !== null;
 }
 
-function isCar(obj: unknown): obj is Car {
+export function isCar(obj: unknown): obj is Car {
   return isObject(obj)
     && typeof obj.id === 'number'
     && typeof obj.name === 'string'

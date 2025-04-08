@@ -49,7 +49,7 @@ async function displayWinners(
     return totalCount;
   } catch (error) {
     if (error instanceof Error) {
-      console.error('Failed to display winners:', error.message);
+      console.log('Failed to display winners:', error.message);
     }
     return 0;
   }
@@ -96,7 +96,7 @@ export function createWinners(container: HTMLElement): void {
       nextBtn.disabled = state.winners.page >= maxPage;
     } catch (error) {
       if (error instanceof Error) {
-        console.error('Error updating winners:', error.message);
+        console.log('Error updating winners:', error.message);
       }
     }
   };

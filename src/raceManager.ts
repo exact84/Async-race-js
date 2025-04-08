@@ -80,18 +80,17 @@ async function startRace(): Promise<void> {
         await handleWinner(winner);
       }
     } catch (error) {
-      console.error('Race error:', error);
+      console.log('Race error:', error);
     }
   });
 
   raceState.racePromises = startPromises;
-  await Promise.allSettled(startPromises); //all
+  await Promise.allSettled(startPromises);
   raceState.isRacing = false;
 }
 
 async function resetRace(): Promise<void> {
   raceState.isRacing = false;
-  // await Promise.allSettled(raceState.racePromises);
   raceState.racePromises = [];
   raceState.winners = [];
 
@@ -100,7 +99,6 @@ async function resetRace(): Promise<void> {
     elements.carImg.style.transform = 'translateX(0)';
     await resetCarAnimation(id, elements);
   });
-
   await Promise.allSettled(resetPromises);
 }
 
@@ -111,7 +109,6 @@ async function handleWinner(winner: Winner): Promise<void> {
 
   try {
     const existingWinner = await getWinner(winner.id);
-
     if (existingWinner) {
       let newTime = existingWinner.time;
       if (winner.time < existingWinner.time) { 
@@ -129,7 +126,7 @@ async function handleWinner(winner: Winner): Promise<void> {
    showWinnerMessage(winner.name, winner.time);
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    console.error('Error handling winner:', errorMessage);
+    console.log('Error handling winner:', errorMessage);
   }
 }
 

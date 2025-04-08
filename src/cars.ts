@@ -98,7 +98,7 @@ export async function showListCars(
           await showListCars(container);
         } catch (error) {
           if (error instanceof Error) {
-            console.error('Failed to remove car:', error.message);
+            console.log('Failed to remove car:', error.message);
           } 
         }
       })();
@@ -193,7 +193,6 @@ export async function startCarAnimation(
     };
   } catch {
     elements.carImg.style.transition = 'none';
-    
     const currentPos = elements.carImg.getBoundingClientRect().left - elements.container.getBoundingClientRect().left;
     elements.carImg.style.transition = 'none';
     requestAnimationFrame(() => {
@@ -218,6 +217,6 @@ export async function resetCarAnimation(
     elements.resetCarBtn.disabled = true;
     elements.startBtn.disabled = false;
   } catch (error) {
-    console.error('Reset error:', error);
+    console.log('Reset error:', error);
   }
 }

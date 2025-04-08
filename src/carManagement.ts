@@ -4,6 +4,8 @@ import { newElement } from './utils';
 import { showListCars, setCarControls } from './cars';
 import { stateManager } from './state';
 
+const COUNT_CARS = 100;
+
 export function setupCarManagement(container: HTMLElement, carsListContainer?: HTMLElement): void {
 
   const createForm = newElement('form', '', container, ['create-form']);
@@ -50,7 +52,8 @@ export function setupCarManagement(container: HTMLElement, carsListContainer?: H
 
   setCarControls(carControls);
 
-  createBtn.addEventListener('click', () => {
+  createBtn.addEventListener('click', (e) => {
+    e.preventDefault();
     void (async (): Promise<void> => {
       const name = createNameInput.value.trim();
       const color = createColorInput.value;
@@ -86,8 +89,7 @@ export function setupCarManagement(container: HTMLElement, carsListContainer?: H
   ]);
   generateBtn.addEventListener('click', () => {
     void (async (): Promise<void> => {
-          // убрать потом параметр 3
-      await generateRandomCars(3);
+      await generateRandomCars(COUNT_CARS);
       await showListCars(carsListContainer ?? container);
     })();
   });
