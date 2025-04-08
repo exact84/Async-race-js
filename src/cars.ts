@@ -4,7 +4,7 @@ import { selectCar, removeCar } from './carManagement';
 import type { CarControls } from './types';
 import priusSvg from './assets/svg2.svg';
 import flagJFIF from './assets/finish.png';
-import { cleanRaceist, registerCarForRace } from './raceManager';
+import { cleanRaceist, raceState, registerCarForRace } from './raceManager';
 import { stateManager } from './state';
 
 const MS_IN_SECOND = 1000;
@@ -94,10 +94,6 @@ export async function showListCars(
     removeBtn.addEventListener('click', () => {
       void (async (): Promise<void> => {
         try {
-          // запретить удалять машины посреди гонки
-          // if (raceState.isRacing) {
-          //   return;
-          // }
           await removeCar(car.id, container);
           await showListCars(container);
         } catch (error) {
@@ -171,6 +167,12 @@ export async function startCarAnimation(
     const finishPosition = elements.container.offsetWidth - elements.carImg.offsetWidth - MARGIN_OFFSET;
     const startTime = Date.now();
 
+    if (!raceState.isRacing) {
+      elements.carImg.style.transition = 'none';
+      elements.carImg.style.transform = 'translateX(0)';
+      return { success: false };
+    }
+
     elements.carImg.style.transition = `transform ${String(duration)}s linear`;
     elements.carImg.style.transform = `translateX(${String(finishPosition)}px)`;
 
@@ -179,17 +181,23 @@ export async function startCarAnimation(
       throw new Error('Engine failure');
     }
 
+    if (!raceState.isRacing) {
+      elements.carImg.style.transition = 'none';
+      elements.carImg.style.transform = 'translateX(0)';
+      return { success: false };
+    }
+
     return { 
       success: true, 
       time: (Date.now() - startTime) / MS_IN_SECOND 
     };
   } catch {
-    // elements.carImg.style.transition = 'none';
+    elements.carImg.style.transition = 'none';
     
     const currentPos = elements.carImg.getBoundingClientRect().left - elements.container.getBoundingClientRect().left;
     elements.carImg.style.transition = 'none';
     requestAnimationFrame(() => {
-      elements.carImg.style.transform = `translateX(${String(currentPos)}px)`;
+      elements.carImg.style.transform = `translateX(${String(currentPos - MARGIN_OFFSET)}px)`;
     });
     return { success: false };
   }
@@ -203,12 +211,10 @@ export async function resetCarAnimation(
     resetCarBtn: HTMLButtonElement;
   }
 ): Promise<void> {
+  elements.carImg.style.transition = 'none';
+  elements.carImg.style.transform = 'translateX(0)';
   try {
     await stopEngine(id);
-    elements.carImg.style.transition = 'none';
-    requestAnimationFrame(() => {
-      elements.carImg.style.transform = 'translateX(0)';
-    });
     elements.resetCarBtn.disabled = true;
     elements.startBtn.disabled = false;
   } catch (error) {

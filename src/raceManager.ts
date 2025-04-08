@@ -13,7 +13,7 @@ interface RaceState {
   racePromises: Promise<void>[];
 }
 
-const raceState: RaceState = {
+export const raceState: RaceState = {
   isRacing: false,
   winners: [],
   racePromises: [],
@@ -85,17 +85,19 @@ async function startRace(): Promise<void> {
   });
 
   raceState.racePromises = startPromises;
-  await Promise.all(startPromises);
+  await Promise.allSettled(startPromises); //all
   raceState.isRacing = false;
 }
 
 async function resetRace(): Promise<void> {
   raceState.isRacing = false;
-  await Promise.allSettled(raceState.racePromises);
+  // await Promise.allSettled(raceState.racePromises);
   raceState.racePromises = [];
   raceState.winners = [];
 
   const resetPromises = [...carElements.entries()].map(async ([id, elements]) => {
+    elements.carImg.style.transition = 'none';
+    elements.carImg.style.transform = 'translateX(0)';
     await resetCarAnimation(id, elements);
   });
 
@@ -103,25 +105,25 @@ async function resetRace(): Promise<void> {
 }
 
 async function handleWinner(winner: Winner): Promise<void> {
+  if (!raceState.isRacing) {
+    return;
+  }
+
   try {
     const existingWinner = await getWinner(winner.id);
 
     if (existingWinner) {
       let newTime = existingWinner.time;
       if (winner.time < existingWinner.time) { 
-        newTime = winner.time; 
-        console.log('winner.time < existingWinner.time', existingWinner.wins);
+        newTime = winner.time;
       } 
       await updateWinner(winner.id, {
         ...existingWinner,
         time: newTime,
         wins: existingWinner.wins + 1,
       });
-
-      console.log('winner.time > existingWinner.time', existingWinner.wins);
     } else {
-      
-      console.log('winner NEW:', winner.id, winner.wins);
+
       await createWinner(winner);
     }
    showWinnerMessage(winner.name, winner.time);
